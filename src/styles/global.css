@@ -97,6 +97,24 @@ p{ margin:0; }
 .m-row .m-div{ font-family:'IBM Plex Mono',monospace; font-size:.66rem; color:#8E9A95; width:2.4em; }
 .manifest-foot{ padding:12px 18px; border-top:1px dashed rgba(237,231,217,.22); font-size:.72rem; color:#A9B3AF; }
 
+/* hero: stack on tablets/phones so nothing overflows */
+.hero-grid > *{ min-width:0; }
+@media (max-width:840px){
+  .hero{ padding:40px 0 48px; }
+  .hero-grid{ grid-template-columns:1fr; gap:36px; }
+  .hero h1{ max-width:none; font-size:clamp(2rem,9vw,2.6rem); }
+  .hero-desc{ max-width:none; }
+  .hero-facts{ gap:20px 28px; margin-top:32px; }
+}
+@media (max-width:520px){
+  .manifest-head{ flex-wrap:wrap; gap:4px 12px; padding:12px 14px; }
+  .manifest-head .m-label{ font-size:.66rem; letter-spacing:.06em; }
+  .m-row{ padding:9px 14px; gap:8px; }
+  .m-row .m-name{ min-width:0; overflow-wrap:anywhere; }
+  .m-row .m-tag{ white-space:normal; text-align:right; max-width:42%; }
+  .manifest-foot{ padding:12px 14px; }
+}
+
 /* ---------- policy strip ---------- */
 .policy-strip{ background:var(--surf); border-bottom:1px solid var(--border); }
 .policy-row{ display:flex; flex-wrap:wrap; gap:0; }
