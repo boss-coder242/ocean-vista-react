@@ -10,6 +10,9 @@ const DIVISION_OPTIONS = [
   'Specialty & Trade Goods',
 ];
 
+// India numbers must be exactly 10 digits; other countries are free-form.
+const isIndia = (country) => /^\s*(india|bharat|in)\s*$/i.test(country || '');
+
 const EMPTY_FORM = {
   companyName: '', contactPerson: '', email: '', phone: '', country: '',
   division: '', quantity: '', incoterm: '', port: '', message: '',
@@ -61,6 +64,15 @@ export default function InquiryModal({ open, onClose, initialProduct, initialDiv
       alert("Please fill in company, contact person, email and phone.");
       return;
     }
+    if (isIndia(form.country)) {
+      if (!/^\d{10}$/.test(form.phone)) {
+        alert("For India, please enter a 10-digit mobile number (digits only).");
+        return;
+      }
+    } else if (!/^\+?[\d\s\-()]{6,20}$/.test(form.phone) || form.phone.replace(/\D/g, '').length < 6) {
+      alert("Please enter a valid phone number, including country code.");
+      return;
+    }
     const ref = 'INQ-' + new Date().getFullYear() + '-' + Math.random().toString(36).slice(2, 7).toUpperCase();
     setSubmitting(true);
     try {
@@ -110,7 +122,24 @@ export default function InquiryModal({ open, onClose, initialProduct, initialDiv
                 </div>
                 <div className="field">
                   <label htmlFor="phone">Phone / WhatsApp</label>
-                  <input id="phone" type="tel" value={form.phone} onChange={update('phone')} required autoComplete="tel" />
+                  <input
+                    id="phone"
+                    type="tel"
+                    inputMode={isIndia(form.country) ? 'numeric' : 'tel'}
+                    maxLength={isIndia(form.country) ? 10 : 20}
+                    placeholder={isIndia(form.country) ? '10-digit mobile number' : 'Include country code, e.g. +971 50 123 4567'}
+                    title={isIndia(form.country) ? 'Enter a 10-digit mobile number' : 'Enter your phone number with country code'}
+                    value={form.phone}
+                    onChange={(e) => {
+                      const raw = e.target.value;
+                      const v = isIndia(form.country)
+                        ? raw.replace(/\D/g, '').slice(0, 10)
+                        : raw.replace(/[^\d+\s\-()]/g, '').slice(0, 20);
+                      setForm((f) => ({ ...f, phone: v }));
+                    }}
+                    required
+                    autoComplete="tel"
+                  />
                 </div>
                 <div className="field">
                   <label htmlFor="country">Country</label>
